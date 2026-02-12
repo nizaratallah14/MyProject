@@ -3,43 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cool Scroll Site</title>
+<title>Modern Scroll Site</title>
 <style>
-  /* Reset and basics */
+  /* Reset */
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+  body { font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
 
   /* Sections */
   section {
     position: relative;
-    min-height: 100vh;
+    height: 100vh;
     width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     color: white;
     text-align: center;
-    font-size: 2em;
-    transition: all 1s ease;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
   }
 
-  /* Backgrounds */
-  #section1 { background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
-  #section2 { background: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
-  #section3 { background: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
-  #section4 { background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
+  /* Parallax backgrounds */
+  #section1 { background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80'); }
+  #section2 { background-image: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1950&q=80'); }
+  #section3 { background-image: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1950&q=80'); }
 
-  /* Overlay effect */
+  /* Overlay */
   section::before {
     content: '';
     position: absolute;
-    top:0; left:0;
-    width:100%; height:100%;
+    top:0; left:0; width:100%; height:100%;
     background: rgba(0,0,0,0.4);
-    z-index:0;
+    z-index: 0;
   }
 
-  /* Content inside sections */
   .content {
     position: relative;
     z-index:1;
@@ -47,65 +45,62 @@
     padding: 20px;
     opacity: 0;
     transform: translateY(50px);
+    transition: all 0.8s ease-out;
   }
 
-  /* Button */
-  .btn {
-    margin-top: 20px;
-    padding: 15px 30px;
-    font-size: 1em;
+  /* Fixed button */
+  .fixed-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    padding: 12px 20px;
+    background: #ff4081;
+    color: white;
     border: none;
     border-radius: 10px;
-    background-color: #ff4081;
     cursor: pointer;
+    font-size: 16px;
     transition: transform 0.2s;
   }
-  .btn:hover { transform: scale(1.1); }
+  .fixed-btn:hover { transform: scale(1.1); }
 
 </style>
 </head>
 <body>
 
+<button class="fixed-btn" onclick="alert('Hi!')">Say Hi</button>
+
 <section id="section1">
   <div class="content">
-    <h1>Welcome to Space World</h1>
-    <p>Scroll down to explore the universe</p>
-    <button class="btn" onclick="alert('Hi!')">Say Hi</button>
+    <h1>Welcome to the Universe</h1>
+    <p>Scroll down to explore amazing content</p>
   </div>
 </section>
 
 <section id="section2">
   <div class="content">
-    <h1>Planets Galore</h1>
-    <p>Discover colorful planets and galaxies</p>
+    <h1>Galaxies and Planets</h1>
+    <p>Beautiful visuals and interactive sections</p>
   </div>
 </section>
 
 <section id="section3">
   <div class="content">
-    <h1>Spaceships</h1>
-    <p>Advanced spaceships for interstellar travel</p>
-  </div>
-</section>
-
-<section id="section4">
-  <div class="content">
-    <h1>End of the Journey</h1>
+    <h1>Final Section</h1>
     <p>Thanks for scrolling through!</p>
   </div>
 </section>
 
 <script>
-  // Simple scroll-triggered fade in
+  // Scroll-trigger animation
   const sections = document.querySelectorAll('.content');
 
-  function checkVisibility() {
-    const triggerBottom = window.innerHeight * 0.8;
-
+  function animateSections() {
+    const trigger = window.innerHeight * 0.8;
     sections.forEach(sec => {
       const top = sec.getBoundingClientRect().top;
-
-      if(top < triggerBottom){
+      if(top < trigger){
         sec.style.opacity = 1;
         sec.style.transform = 'translateY(0)';
       } else {
@@ -115,8 +110,8 @@
     });
   }
 
-  window.addEventListener('scroll', checkVisibility);
-  window.addEventListener('load', checkVisibility);
+  window.addEventListener('scroll', animateSections);
+  window.addEventListener('load', animateSections);
 </script>
 
 </body>
