@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Scrollable 3D Balls</title>
+<title>Scrollable 3D Shapes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   html, body { width:100%; height:100%; margin:0; font-family:sans-serif; overflow-x:hidden; }
@@ -10,25 +10,23 @@
   .content {
     position: relative;
     z-index:1;
-    width:100%;
-    height:300vh; /* enough to scroll */
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    pointer-events:none;
+    width: 100%;
+    height: 300vh; /* enough to scroll */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+    gap: 50px;
   }
   .btn {
-    margin: 40px;
     padding: 15px 25px;
-    background:#ff4081;
-    color:white;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:18px;
-    pointer-events:auto; /* allow clicks */
-    z-index:2;
+    background: #ff4081;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    pointer-events: auto; /* allow clicks */
   }
 </style>
 </head>
@@ -45,45 +43,73 @@
 <script src="https://cdn.babylonjs.com/babylon.js"></script>
 
 <script>
+// Engine & Scene
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 const scene = new BABYLON.Scene(engine);
 
 // Camera
-const camera = new BABYLON.ArcRotateCamera("cam", Math.PI/2, Math.PI/4, 10, BABYLON.Vector3.Zero(), scene);
+const camera = new BABYLON.ArcRotateCamera("cam", Math.PI/2, Math.PI/4, 15, BABYLON.Vector3.Zero(), scene);
 camera.attachControl(canvas, true);
 
-// Light
+// Lights
 const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0,1,0), scene);
 light.intensity = 0.9;
 
-// Create multiple balls
-const balls = [];
+// Array to hold all shapes
+const shapes = [];
+
+// Create 30+ shapes (sphere, box, torus)
 for(let i=0;i<30;i++){
-    const sphere = BABYLON.MeshBuilder.CreateSphere("sphere"+i, {diameter:1}, scene);
-    sphere.position = new BABYLON.Vector3(Math.random()*6-3, Math.random()*4-2, Math.random()*6-3);
-    const mat = new BABYLON.StandardMaterial("mat"+i, scene);
-    mat.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
-    sphere.material = mat;
-    balls.push(sphere);
+    let mesh;
+    const type = Math.floor(Math.random()*3); // 0=sphere,1=box,2=torus
+    if(type===0) mesh = BABYLON.MeshBuilder.CreateSphere("sphere"+i,{diameter:1},scene);
+    if(type===1) mesh = BABYLON.MeshBuilder.CreateBox("box"+i,{size:1},scene);
+    if(type===2) mesh = BABYLON.MeshBuilder.CreateTorus("torus"+i,{diameter:1,thickness:0.3},scene);
+
+    mesh.position = new BABYLON.Vector3(Math.random()*12-6, Math.random()*6-3, Math.random()*12-6);
+
+    const mat = new BABYLON.StandardMaterial("mat"+i,scene);
+    mat.diffuseColor = new BABYLON.Color3(Math.random(),Math.random(),Math.random());
+    mesh.material = mat;
+
+    // Add small random speed for floating and rotation
+    mesh.userData = {
+        rotSpeedY: 0.002 + Math.random()*0.003,
+        floatSpeed: 0.001 + Math.random()*0.002,
+        floatDirection: Math.random() > 0.5 ? 1 : -1
+    };
+
+    shapes.push(mesh);
 }
 
-// Scroll to move balls
-window.addEventListener('scroll', () => {
+// Scroll animation
+window.addEventListener('scroll', ()=>{
     const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-    balls.forEach((ball,i)=>{
-        ball.position.y = (i - 2) * 2 - scrollPercent * 5; // spread and move vertically
-        ball.rotation.y = scrollPercent * Math.PI * (i+1); // rotate each differently
+    shapes.forEach((mesh,i)=>{
+        // Move up/down slightly based on scroll
+        mesh.position.y += (scrollPercent*5 - mesh.position.y)*0.05;
+        // Rotate based on scroll
+        mesh.rotation.y += scrollPercent * 0.02;
     });
 });
 
-// Animate
+// Animate shapes
 engine.runRenderLoop(()=>{
+    shapes.forEach(mesh=>{
+        // Slowly rotate by default
+        mesh.rotation.y += mesh.userData.rotSpeedY;
+        // Slowly float up/down
+        mesh.position.y += mesh.userData.floatSpeed * mesh.userData.floatDirection;
+        // Bounce if too high or low
+        if(mesh.position.y>6) mesh.userData.floatDirection = -1;
+        if(mesh.position.y<-6) mesh.userData.floatDirection = 1;
+    });
     scene.render();
 });
 
 // Resize
-window.addEventListener('resize', () => engine.resize());
+window.addEventListener('resize',()=>engine.resize());
 </script>
 
 </body>
