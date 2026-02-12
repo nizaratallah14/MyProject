@@ -59,7 +59,7 @@ light.intensity = 0.9;
 
 // Create multiple balls
 const balls = [];
-for(let i=0;i<5;i++){
+for(let i=0;i<30;i++){
     const sphere = BABYLON.MeshBuilder.CreateSphere("sphere"+i, {diameter:1}, scene);
     sphere.position = new BABYLON.Vector3(Math.random()*6-3, Math.random()*4-2, Math.random()*6-3);
     const mat = new BABYLON.StandardMaterial("mat"+i, scene);
