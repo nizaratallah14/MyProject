@@ -3,128 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interactive Dodging Button</title>
+<title>Cool Scroll Site</title>
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-    background-size: cover;
+  /* Reset and basics */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+
+  /* Sections */
+  section {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+    text-align: center;
+    font-size: 2em;
+    transition: all 1s ease;
   }
 
-  /* Fixed top button */
-  #fixedBtn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px;
+  /* Backgrounds */
+  #section1 { background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
+  #section2 { background: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
+  #section3 { background: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
+  #section4 { background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat; }
+
+  /* Overlay effect */
+  section::before {
+    content: '';
+    position: absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.4);
+    z-index:0;
+  }
+
+  /* Content inside sections */
+  .content {
+    position: relative;
+    z-index:1;
+    max-width: 900px;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  /* Button */
+  .btn {
+    margin-top: 20px;
+    padding: 15px 30px;
     font-size: 1em;
-    background-color: #ff4081;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
+    background-color: #ff4081;
     cursor: pointer;
-    color: white;
-    z-index: 1000;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     transition: transform 0.2s;
   }
+  .btn:hover { transform: scale(1.1); }
 
-  #fixedBtn:hover {
-    transform: translateY(-3px);
-  }
-
-  /* Dodging button */
-  #dodger {
-    position: absolute;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    border-radius: 12px;
-    background-color: #00e676;
-    border: none;
-    cursor: pointer;
-    color: white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transition: transform 0.1s;
-  }
 </style>
 </head>
 <body>
-<iframe
-  width="0"
-  height="0"
-  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ&mute=0"
-  frameborder="0"
-  allow="autoplay"
-  allowfullscreen
-></iframe>
-<button id="fixedBtn" onclick="alert('Hi!')">Fixed Hi2</button>
-<button id="dodger">Try to Click Me!</button>
+
+<section id="section1">
+  <div class="content">
+    <h1>Welcome to Space World</h1>
+    <p>Scroll down to explore the universe</p>
+    <button class="btn" onclick="alert('Hi!')">Say Hi</button>
+  </div>
+</section>
+
+<section id="section2">
+  <div class="content">
+    <h1>Planets Galore</h1>
+    <p>Discover colorful planets and galaxies</p>
+  </div>
+</section>
+
+<section id="section3">
+  <div class="content">
+    <h1>Spaceships</h1>
+    <p>Advanced spaceships for interstellar travel</p>
+  </div>
+</section>
+
+<section id="section4">
+  <div class="content">
+    <h1>End of the Journey</h1>
+    <p>Thanks for scrolling through!</p>
+  </div>
+</section>
 
 <script>
-  const dodger = document.getElementById('dodger');
-  let posX = window.innerWidth / 2 - 75; // initial x
-  let posY = window.innerHeight / 2 - 25; // initial y
-  let velX = 2 + Math.random() * 3;
-  let velY = 2 + Math.random() * 3;
+  // Simple scroll-triggered fade in
+  const sections = document.querySelectorAll('.content');
 
-  dodger.style.left = posX + 'px';
-  dodger.style.top = posY + 'px';
+  function checkVisibility() {
+    const triggerBottom = window.innerHeight * 0.8;
 
-  function update() {
-    posX += velX;
-    posY += velY;
+    sections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top;
 
-    // Bounce on edges
-    if(posX <= 0 || posX + dodger.offsetWidth >= window.innerWidth) velX *= -1;
-    if(posY <= 0 || posY + dodger.offsetHeight >= window.innerHeight) velY *= -1;
-
-    dodger.style.left = posX + 'px';
-    dodger.style.top = posY + 'px';
-
-    requestAnimationFrame(update);
-  }
-  update();
-
-  // Mouse hover for desktop
-  document.addEventListener('mousemove', e => {
-    const rect = dodger.getBoundingClientRect();
-    const distX = e.clientX - (rect.left + rect.width/2);
-    const distY = e.clientY - (rect.top + rect.height/2);
-    const distance = Math.sqrt(distX*distX + distY*distY);
-
-    if(distance < 100) {
-      velX = (distX / distance) * -5;
-      velY = (distY / distance) * -5;
-    }
-  });
-
-  // Touch for mobile
-  document.addEventListener('touchmove', e => {
-    if(e.touches.length > 0){
-      const touch = e.touches[0];
-      const rect = dodger.getBoundingClientRect();
-      const distX = touch.clientX - (rect.left + rect.width/2);
-      const distY = touch.clientY - (rect.top + rect.height/2);
-      const distance = Math.sqrt(distX*distX + distY*distY);
-
-      if(distance < 100) {
-        velX = (distX / distance) * -5;
-        velY = (distY / distance) * -5;
+      if(top < triggerBottom){
+        sec.style.opacity = 1;
+        sec.style.transform = 'translateY(0)';
+      } else {
+        sec.style.opacity = 0;
+        sec.style.transform = 'translateY(50px)';
       }
-    }
-  });
+    });
+  }
 
-  // Optional: resize window handling
-  window.addEventListener('resize', () => {
-    posX = Math.min(posX, window.innerWidth - dodger.offsetWidth);
-    posY = Math.min(posY, window.innerHeight - dodger.offsetHeight);
-  });
+  window.addEventListener('scroll', checkVisibility);
+  window.addEventListener('load', checkVisibility);
 </script>
 
 </body>
