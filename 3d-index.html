@@ -9,15 +9,15 @@
   position: absolute;
   bottom: 2vh;          /* 2% of viewport height from bottom */
   left: 2vw;            /* 2% of viewport width from left */
-  width: 15vw;           /* 15% of viewport width */
-  height: 15vw;          /* keep it square */
+  width: 250px;           /* 15% of viewport width */
+  height: 250px;          /* keep it square */
   border-radius: 50%;
   background: rgba(200,200,200,0.3);
   touch-action: none;
 }
 #stick {
-  width: 6vw;           /* proportional to joystick size */
-  height: 6vw;
+  width: 90px;           /* proportional to joystick size */
+  height: 90px;
   background: rgba(100,100,100,0.7);
   border-radius: 50%;
   position: absolute;
@@ -303,12 +303,16 @@ billboard.actionManager.registerAction(
 <!-- Chicken Model -->
 <script>
 BABYLON.SceneLoader.Append("", "model/chicken.glb", scene, function(scene) {
-    // Access the loaded mesh
+    // Access the loaded meshes
     const chicken = scene.meshes[scene.meshes.length - 1]; // last mesh of loaded model
 
     // Place it on the path (middle)
-    chicken.position = new BABYLON.Vector3(0, 0, 100); // x=0 center, z=middle of 200 length path
-    chicken.position.y += 0.5; // lift a bit above the path
+    chicken.position = new BABYLON.Vector3(0, 0, 100);
+    
+    // Lift chicken a bit based on its bounding box
+    const boundingInfo = chicken.getBoundingInfo();
+    const chickenHeight = boundingInfo.boundingBox.extendSize.y * 2;
+    chicken.position.y += chickenHeight / 2;
 
     // Optional: make it clickable
     chicken.actionManager = new BABYLON.ActionManager(scene);
@@ -318,15 +322,18 @@ BABYLON.SceneLoader.Append("", "model/chicken.glb", scene, function(scene) {
         })
     );
 
-    // Scale smaller than the player
-    chicken.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
-
+    // Dynamically scale smaller than the player
+    const playerHeight = 2; // your player's height (digit "9" plane height)
+    const scaleFactor = playerHeight / chickenHeight * 0.5; // 0.5 ensures chicken is smaller
+    chicken.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
 });
 </script>
 
 
+
 </body>
 </html>
+
 
 
 
