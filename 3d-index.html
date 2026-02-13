@@ -302,13 +302,13 @@ billboard.actionManager.registerAction(
 
 <!-- Chicken Model -->
 <script>
-BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
+BABYLON.SceneLoader.Append("", "model/chicken.glb", scene, function(scene) {
     // Access the loaded mesh
     const chicken = scene.meshes[scene.meshes.length - 1]; // last mesh of loaded model
 
     // Place it on the path (middle)
     chicken.position = new BABYLON.Vector3(0, 0, 100); // x=0 center, z=middle of 200 length path
-    chicken.position.y += 0.5; // lift a bit if needed
+    chicken.position.y += 0.5; // lift a bit above the path
 
     // Optional: make it clickable
     chicken.actionManager = new BABYLON.ActionManager(scene);
@@ -318,8 +318,8 @@ BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
         })
     );
 
-    // Optional: scale if model is too big/small
-    chicken.scaling = new BABYLON.Vector3(0.1, 0.1, 0.1);
+    // Scale smaller than the player
+    chicken.scaling = new BABYLON.Vector3(0.05, 0.05, 0.05);
 
 });
 </script>
@@ -327,5 +327,6 @@ BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
 
 </body>
 </html>
+
 
 
