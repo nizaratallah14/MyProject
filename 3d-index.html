@@ -62,7 +62,7 @@ let moveInput = {x:0,y:0};
 const joystick = document.getElementById("joystick");
 const stick = document.getElementById("stick");
 let dragging=false;
-const resetStick = ()=>{stick.style.left='35px'; stick.style.top='35px'; moveInput={x:0,y:0};};
+const resetStick = ()=>{stick.style.left='100px'; stick.style.top='100px'; moveInput={x:0,y:0};};
 
 joystick.addEventListener('pointerdown',(e)=>{dragging=true; e.target.setPointerCapture(e.pointerId);});
 joystick.addEventListener('pointerup',(e)=>{dragging=false; resetStick();});
@@ -75,8 +75,8 @@ joystick.addEventListener('pointermove',(e)=>{
   const maxDist = rect.width/2 - 25;
   let dist = Math.min(Math.sqrt(dx*dx+dy*dy), maxDist);
   let angle = Math.atan2(dy, dx);
-  stick.style.left = `$100px`;
-  stick.style.top = `$100px`;
+  stick.style.left = `${35 + Math.cos(angle)*dist}px`;
+  stick.style.top = `${35 + Math.sin(angle)*dist}px`;
   moveInput.x = Math.cos(angle)*(dist/maxDist);
   moveInput.y = -Math.sin(angle)*(dist/maxDist);
 });
@@ -318,7 +318,7 @@ BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
     chickenRoot.scaling = new BABYLON.Vector3(0.005, 0.005, 0.005); // very small
 
     // Place on path
-    chickenRoot.position = new BABYLON.Vector3(0, 0.5, 10); // adjust Y so it sits on path
+    chickenRoot.position = new BABYLON.Vector3(4, 0.5, 4); // adjust Y so it sits on path
 
     // Optional: clickable
     chickenRoot.actionManager = new BABYLON.ActionManager(scene);
@@ -333,6 +333,7 @@ BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
 
 </body>
 </html>
+
 
 
 
