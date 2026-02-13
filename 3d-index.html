@@ -21,8 +21,8 @@
   background: rgba(100,100,100,0.7);
   border-radius: 50%;
   position: absolute;
-  left: calc(50% - 3vw); /* center the stick inside joystick */
-  top: calc(50% - 3vw);
+  left: 75px; /* center the stick inside joystick */
+  top: 75px;
   pointer-events: none;
 }
 </style>
@@ -300,27 +300,41 @@ billboard.actionManager.registerAction(
 
 <script src="https://cdn.babylonjs.com/loaders/babylon.glTF2FileLoader.js"></script>
 
-<!-- Chicken Model -->
 <script>
 BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
-    // Access the loaded meshes
-    const chicken = scene.meshes[scene.meshes.length - 1]; // last mesh of loaded model
+    // The loaded model root is usually scene.meshes[0]
+    const chickenRoot = scene.meshes[0];
 
-    // Get chicken's bounding info
-    const boundingInfo = chicken.getBoundingInfo();
-    const currentHeight = boundingInfo.boundingBox.extendSize.y * 2; // full height
+    // Wrap all meshes under a single TransformNode for easy scaling
+    const chicken = new BABYLON.TransformNode("chickenRoot", scene);
+    scene.meshes.forEach(mesh => {
+        mesh.parent = chicken;
+    });
 
-    // Desired height in world units
-    const desiredHeight = 0.5; // 0.5 units = smaller than player
+    // Compute bounding info for the whole chicken
+    const boundingInfo = chicken.getBoundingInfo ? chicken.getBoundingInfo() : chicken.getHierarchyBoundingVectors ? chicken.getHierarchyBoundingVectors(true) : null;
 
-    // Compute scale factor
+    // If boundingInfo not available, estimate from children
+    let currentHeight = 1; // fallback
+    if (boundingInfo) {
+        if (boundingInfo.boundingBox) {
+            currentHeight = boundingInfo.boundingBox.extendSize.y * 2;
+        } else if (boundingInfo.max && boundingInfo.min) {
+            currentHeight = boundingInfo.max.y - boundingInfo.min.y;
+        }
+    }
+
+    // Desired height
+    const desiredHeight = 0.5; // smaller than player
     const scaleFactor = desiredHeight / currentHeight;
+
+    // Scale whole chicken
     chicken.scaling = new BABYLON.Vector3(scaleFactor, scaleFactor, scaleFactor);
 
-    // Place it on the path (middle)
-    chicken.position = new BABYLON.Vector3(0, desiredHeight / 2, 10); // lift it above floor
+    // Place on path (middle)
+    chicken.position = new BABYLON.Vector3(0, desiredHeight / 2, 10);
 
-    // Optional: make it clickable
+    // Make clickable
     chicken.actionManager = new BABYLON.ActionManager(scene);
     chicken.actionManager.registerAction(
         new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, () => {
@@ -333,8 +347,10 @@ BABYLON.SceneLoader.Append("", "chicken.glb", scene, function(scene) {
 
 
 
+
 </body>
 </html>
+
 
 
 
